@@ -19,9 +19,7 @@ pipeline {
             steps {
                 echo "Starting Test Stage"
                 script {
-                    docker.image(DOCKER_IMAGE).inside {
-                        sh 'chown -R 995:991 /app/.npm || true'
-                        sh 'npm config set cache /app/.npm --global'
+                    docker.image(DOCKER_IMAGE).inside('-u root') {
                         sh 'npm install'
                         sh 'npm test'
                     }
