@@ -15,6 +15,7 @@ pipeline {
             steps {
                 script {
                     docker.image(DOCKER_IMAGE).inside {
+                        sh 'chown -R node:node /app/.npm'
                         sh 'npm config set cache /app/.npm --global'
                         sh 'npm install'
                         sh 'npm test'
@@ -31,4 +32,3 @@ pipeline {
         }
     }
 }
-
