@@ -33,7 +33,7 @@ pipeline {
         stage('Deploy') {
             steps {
                 script {
-                    docker.image(DOCKER_IMAGE).run('-d -p 3001:3000')
+                    docker.image(DOCKER_IMAGE).run('-d -p 3000:3000')
                 }
             }
         }
