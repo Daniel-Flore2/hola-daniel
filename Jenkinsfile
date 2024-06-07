@@ -15,7 +15,11 @@ pipeline {
             steps {
                 script {
                     docker.image(DOCKER_IMAGE).inside {
-                        sh 'chown -R node:node /app/.npm'
+                        sh '''
+                            # Ensure the .npm directory exists and set ownership
+                            mkdir -p /app/.npm
+                            chown -R node:node /app/.npm
+                        '''
                         sh 'npm config set cache /app/.npm --global'
                         sh 'npm install'
                         sh 'npm test'
