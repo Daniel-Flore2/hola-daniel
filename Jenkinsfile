@@ -14,15 +14,20 @@ pipeline {
         stage('Test') {
             steps {
                 script {
-                    docker.image(DOCKER_IMAGE).inside {
+                    docker.image(DOCKER_IMAGE).inside('-u root') {
                         sh '''
-                            # Ensure the .npm directory exists and set ownership
+                            # Crear el directorio con permisos root
                             mkdir -p /app/.npm
                             chown -R node:node /app/.npm
                         '''
-                        sh 'npm config set cache /app/.npm --global'
-                        sh 'npm install'
-                        sh 'npm test'
+                        sh '''
+                            # Cambiar al usuario node
+                            su node -c "
+                            npm config set cache /app/.npm --global && 
+                            npm install && 
+                            npm test
+                            "
+                        '''
                     }
                 }
             }
