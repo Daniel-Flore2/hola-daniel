@@ -1,41 +1,41 @@
 pipeline {
-    agent any
-    environment {
-        DOCKER_IMAGE = 'node-hello-world'
+  agent any
+
+  environment {
+    DOCKERIMAGE = "pipeline-hello-world"
+    HOME = "."
+  }
+
+  stages {
+    stage('Limpiar Contenedores') {
+            steps {
+                    sh 'docker stop $(docker ps -q)'
+            }
+        }
+    stage ('Build') {
+      steps {
+        script {
+          docker.build(DOCKERIMAGE)
+        }
+      }
     }
-    stages {
-        stage('Build') {
-            steps {
-                script {
-                    docker.build(DOCKER_IMAGE)
-                }
-            }
+
+    stage ('Test') {
+      steps {
+        script {
+          docker.image(DOCKERIMAGE).inside {
+            sh 'npm install'
+            sh 'npm test'
+          }
         }
-        stage('Test') {
-            steps {
-                script {
-                    docker.image(DOCKER_IMAGE).inside('-u root') {
-                        sh '''
-                            mkdir -p /app/.npm
-                            chown -R node:node /app/.npm
-                        '''
-                    }
-                    docker.image(DOCKER_IMAGE).inside('-u node') {
-                        sh '''
-                            npm config set cache /app/.npm --global
-                            npm install
-                            npm test
-                        '''
-                    }
-                }
-            }
-        }
-        stage('Deploy') {
-            steps {
-                script {
-                    docker.image(DOCKER_IMAGE).run('-d -p 3000:3000')
-                }
-            }
-        }
+      }
     }
+    stage ('Deploy') {
+      steps {
+        script {
+          docker.image(DOCKERIMAGE).run('-d -p 3000:3000')
+        }
+      }
+    }
+  }
 }
