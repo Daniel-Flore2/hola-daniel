@@ -16,17 +16,15 @@ pipeline {
                 script {
                     docker.image(DOCKER_IMAGE).inside('-u root') {
                         sh '''
-                            # Crear el directorio con permisos root
                             mkdir -p /app/.npm
                             chown -R node:node /app/.npm
                         '''
+                    }
+                    docker.image(DOCKER_IMAGE).inside('-u node') {
                         sh '''
-                            # Cambiar al usuario node
-                            su node -c "
-                            npm config set cache /app/.npm --global && 
-                            npm install && 
+                            npm config set cache /app/.npm --global
+                            npm install
                             npm test
-                            "
                         '''
                     }
                 }
