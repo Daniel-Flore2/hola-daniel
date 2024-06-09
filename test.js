@@ -7,9 +7,9 @@ app.get('/api/v1/welcome', (req, res) => {
 });
 
 describe('GET /api/v1/welcome', () => {
-    it('respond with Hello, World!', (done) => {
+    it('respond with hola daniel!', (done) => {
         request(app)
             .get('/api/v1/welcome')
-            .expect('Hello, World!', done);
+            .expect('hola daniel!', done);
     });
 });
